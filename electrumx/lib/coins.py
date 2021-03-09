@@ -2140,6 +2140,10 @@ class Megacoin(BitcoinMixin, Coin):
     TX_COUNT_HEIGHT = 1408161
     TX_PER_BLOCK = 2
     RPC_PORT = 7952
+    PEER_DEFAULT_PORTS = {'t': '50005', 's': '50006'}
+    PEERS = [
+        'ele1.megacoin-mec.cc s t'
+    ]
 
 
 class GameCredits(Coin):
