@@ -44,7 +44,8 @@ from electrumx.lib.script import (_match_ops, Script, ScriptError,
                                   ScriptPubKey, OpCodes)
 import electrumx.lib.tx as lib_tx
 import electrumx.lib.tx_crown as lib_tx_crown
-import electrumx.lib.tx_dash as lib_tx_dash
+import electrumx.lib.tx_dash as lib_tx_dashs
+
 import electrumx.lib.tx_axe as lib_tx_axe
 import electrumx.server.block_processor as block_proc
 import electrumx.server.daemon as daemon
@@ -1200,6 +1201,62 @@ class Motion(Coin):
         '''Given a header return the hash.'''
         import x16r_hash
         return x16r_hash.getPoWHash(header)
+    
+# Source: https://github.com/dashpay/dash
+class Dash(Coin):
+    NAME = "RuxCrypto"
+    SHORTNAME = "RXC"
+    NET = "mainnet"
+    XPUB_VERBYTES = bytes.fromhex("02fe52cc")
+    XPRV_VERBYTES = bytes.fromhex("02fe52f8")
+    GENESIS_HASH = ('00000c63f5826a523923939a5adf2865'
+                    '7c2a6b76764f1af99bb39437006489d3')
+    P2PKH_VERBYTE = bytes.fromhex("4c")
+    P2SH_VERBYTES = [bytes.fromhex("10")]
+    WIF_BYTE = bytes.fromhex("cc")
+    TX_COUNT_HEIGHT = 81000
+    TX_COUNT = 2157510
+    TX_PER_BLOCK = 4
+    RPC_PORT = 23505
+    SESSIONCLS = DashElectrumX
+    DAEMON = daemon.DashDaemon
+    DESERIALIZER = lib_tx_dash.DeserializerDash
+
+    @classmethod
+    def header_hash(cls, header):
+        '''Given a header return the hash.'''
+        import x11_hash
+        return x11_hash.getPoWHash(header)
+
+
+class DashTestnet(Dash):
+    SHORTNAME = "tDASH"
+    NET = "testnet"
+    XPUB_VERBYTES = bytes.fromhex("3a805837")
+    XPRV_VERBYTES = bytes.fromhex("3a8061a0")
+    GENESIS_HASH = ('00000bafbc94add76cb75e2ec9289483'
+                    '7288a481e5c005f6563d91623bf8bc2c')
+    P2PKH_VERBYTE = bytes.fromhex("8c")
+    P2SH_VERBYTES = [bytes.fromhex("13")]
+    WIF_BYTE = bytes.fromhex("ef")
+    TX_COUNT_HEIGHT = 101619
+    TX_COUNT = 132681
+    TX_PER_BLOCK = 1
+    RPC_PORT = 19998
+    PEER_DEFAULT_PORTS = {'t': '51001', 's': '51002'}
+    PEERS = [
+        'electrum.dash.siampm.com s t',
+        'dasht.random.re s54002 t54001',
+    ]
+
+
+class DashRegtest(DashTestnet):
+    NET = "regtest"
+    GENESIS_HASH = ('000008ca1832a4baf228eb1553c03d3a'
+                    '2c8e02399550dd6ea8d65cec3ef23d2e')
+    PEERS = []
+    TX_COUNT_HEIGHT = 1
+    TX_COUNT = 1 
 
 
 # Source: https://github.com/dashpay/dash
@@ -3928,3 +3985,57 @@ class Quebecoin(AuxPowMixin, Coin):
     TX_PER_BLOCK = 20
     REORG_LIMIT = 2000
     RPC_PORT = 10890
+    
+class RXC(Dash):
+    NAME = "RuxCrypto"
+    SHORTNAME = "RXC"
+    NET = "mainnet"
+    XPUB_VERBYTES = bytes.fromhex("02fe52cc")
+    XPRV_VERBYTES = bytes.fromhex("02fe52f8")
+    P2PKH_VERBYTE = bytes.fromhex("3C")
+    P2SH_VERBYTES = [bytes.fromhex("3D")]
+    WIF_BYTE = bytes.fromhex("BC")
+    GENESIS_HASH = ('00000c63f5826a523923939a5adf2865'
+                    '7c2a6b76764f1af99bb39437006489d3')
+    SESSIONCLS = DashElectrumX
+    DAEMON = daemon.DashDaemon
+    DESERIALIZER = lib_tx_rxc.DeserializerRXC
+    TX_COUNT = 18405
+    TX_COUNT_HEIGHT = 30237
+    TX_PER_BLOCK = 1
+    RPC_PORT = 23505
+    REORG_LIMIT = 1000
+    PEERS = []
+
+    @classmethod
+    def header_hash(cls, header):
+        import x11_hash
+        return x11_hash.getPoWHash(header)
+
+
+class RXCTestnet(RXC):
+    SHORTNAME = "tRXC"
+    NET = "testnet"
+    XPUB_VERBYTES = bytes.fromhex("3a805837")
+    XPRV_VERBYTES = bytes.fromhex("3a8061a0")
+    GENESIS_HASH = ('00000341adf1dd4375bef8ff8059b426'
+                    '8fe0282d8a66f8cf5419bd6b13fbb77b')
+    P2PKH_VERBYTE = bytes.fromhex("3C")
+    P2SH_VERBYTES = [bytes.fromhex("3D")]
+    WIF_BYTE = bytes.fromhex("BC")
+    TX_COUNT_HEIGHT = 101619
+    TX_COUNT = 132681
+    TX_PER_BLOCK = 1
+    RPC_PORT = 32505
+    PEER_DEFAULT_PORTS = {'t': '51001', 's': '51002'}
+    PEERS = []
+
+
+class RXCRegtest(RXCTestnet):
+    NET = "regtest"
+    GENESIS_HASH = ('0550380d660e6170a1081bc3dc765fb1'
+                    '92e689d7310c818dab22c8783408102b')
+    PEERS = []
+    TX_COUNT_HEIGHT = 1
+    RPC_PORT = 19994
+    TX_COUNT = 1
